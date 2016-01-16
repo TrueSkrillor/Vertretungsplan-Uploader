@@ -1,0 +1,48 @@
+﻿<Controls:MetroWindow x:Class="VertretungsplanUploader.MainWindow"
+                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+                      Title="Vertretungsplan Uploader" ResizeMode="CanMinimize"
+                      Height="450" Width="700" Closing="MetroWindow_Closing" ShowMinButton="True" StateChanged="MetroWindow_StateChanged">
+    <Controls:MetroWindow.Flyouts>
+        <Controls:FlyoutsControl>
+            <Controls:Flyout Header="Einstellungen" Position="Right" Width="525" IsOpen="False" Name="flyoutSettings">
+                <Grid Margin="15, 0, 20, 15">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Content="Lokaler Pfad heute:" Grid.Row="0" Grid.Column="0" FontWeight="SemiBold" FontSize="13"/>
+                    <Label Content="Lokaler Pfad morgen:" Grid.Row="1" Grid.Column="0" FontWeight="SemiBold" FontSize="13" />
+                    <Label Content="FTP-Verzeichnis:" Grid.Row="2" Grid.Column="0" FontWeight="SemiBold" FontSize="13" />
+                    <Label Content="FTP-Benutzername:" Grid.Row="3" Grid.Column="0" FontWeight="SemiBold" FontSize="13" />
+                    <Label Content="FTP-Passwort:" Grid.Row="4" Grid.Column="0" FontWeight="SemiBold" FontSize="13" />
+                    <Button Name="btnSaveSettings" Content="Speichern" Grid.Row="5" Grid.Column="0" 
+                            Grid.ColumnSpan="2" FontWeight="SemiBold" FontSize="13" Width="150" 
+                            VerticalAlignment="Bottom" Height="40" HorizontalAlignment="Right" Click="btnSaveSettings_Click"/>
+                    <TextBox Name="tbLocalToday" Grid.Row="0" Grid.Column="1" Controls:TextBoxHelper.Watermark="Lokaler Pfad für heute" Height="20" VerticalAlignment="Top" Margin="0, 2" MaxLines="1"/>
+                    <TextBox Name="tbLocalTomorrow" Grid.Row="1" Grid.Column="1" Controls:TextBoxHelper.Watermark="Lokaler Pfad für morgen" Height="20" VerticalAlignment="Top" Margin="0, 2" MaxLines="1"/>
+                    <TextBox Name="tbFtpFolder" Grid.Row="2" Grid.Column="1" Controls:TextBoxHelper.Watermark="FTP-Server/Verzeichnis des Vertretungsplans" Height="20" VerticalAlignment="Top" Margin="0, 2" MaxLines="1"/>
+                    <TextBox Name="tbFtpUser" Grid.Row="3" Grid.Column="1" Controls:TextBoxHelper.Watermark="FTP-Benutzer für diesen Server" Height="20" VerticalAlignment="Top" Margin="0, 2" MaxLines="1"/>
+                    <PasswordBox Name="tbFtpPassword" Grid.Row="4" Grid.Column="1" Controls:PasswordBoxHelper.CapsLockIcon="CAPS" Controls:TextBoxHelper.Watermark="FTP-Passwort für diesen Server" Height="20" VerticalAlignment="Top" Margin="0, 2" PasswordChar="*"/>
+                </Grid>
+            </Controls:Flyout>
+        </Controls:FlyoutsControl>
+    </Controls:MetroWindow.Flyouts>
+    <StackPanel Margin="10, 10, 10, 10">
+        <Label Content="LOG" FontSize="14" FontWeight="SemiBold"/>
+        <TextBox Name="tbStatus" Height="320" IsReadOnly="True" FontSize="12"/>
+        <Grid Margin="0, 10" Height="40">
+            <Button Name="btnSettings" Width="150" Content="Einstellungen" HorizontalAlignment="Left" FontSize="11" Click="btnSettings_Click" FontWeight="SemiBold"/>
+            <Button Name="btnManualSync" Width="150" Content="Manueller Sync" HorizontalAlignment="Right" FontSize="11" Click="btnManualSync_Click" FontWeight="SemiBold"/>
+        </Grid>
+    </StackPanel>
+</Controls:MetroWindow>
