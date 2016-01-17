@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 using System.Net;
 using Vertretungsplan_Uploader.DataClasses;
 using System.IO;

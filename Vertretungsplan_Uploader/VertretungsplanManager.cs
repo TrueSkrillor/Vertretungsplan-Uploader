@@ -3,6 +3,7 @@ using System.Timers;
 using Vertretungsplan_Uploader.DataClasses;
 using System.IO;
 using VertretungsplanUploader;
+using System.Diagnostics;
 
 namespace Vertretungsplan_Uploader
 {
@@ -16,14 +17,8 @@ namespace Vertretungsplan_Uploader
         private string _onlineFilename;
         public DateTime FileLastEdited
         {
-            get
-            {
-                return new FileInfo(_settings.FilePath).LastWriteTime;
-            }
-            set
-            {
-                new FileInfo(_settings.FilePath).LastWriteTime = value;
-            }
+            get { return new FileInfo(_settings.FilePath).LastWriteTime; }
+            set { new FileInfo(_settings.FilePath).LastWriteTime = value; }
         }
         private readonly string[] _filenames = new string[]
         {
@@ -133,7 +128,7 @@ namespace Vertretungsplan_Uploader
                 {
                     _ftpTools.DeleteFile(string.Format("{0}{1}_{2}.html", _settings.RemotePath, name, _settings.SavePostfix));
                 }
-                catch (Exception e) { System.Diagnostics.Debug.WriteLine(e.Message); }
+                catch (Exception e) { Debug.WriteLine(e.Message); }
             }
         }
 
