@@ -15,10 +15,10 @@ namespace VertretungsplanUploader
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
-        private Settings todaySettings;
-        private Settings tomorrowSettings;
-        private VertretungsplanManager managerToday;
-        private VertretungsplanManager managerTomorrow;
+        private Settings _todaySettings;
+        private Settings _tomorrowSettings;
+        private VertretungsplanManager _managerToday;
+        private VertretungsplanManager _managerTomorrow;
 
         private NotifyIcon notifyIcon;
 
@@ -32,8 +32,8 @@ namespace VertretungsplanUploader
             notifyIcon.Visible = false;
             notifyIcon.Click += NotifyIcon_Click;
 
-            new Action(() => todaySettings = loadSettings("heute")).BeginInvoke(null, this);
-            new Action(() => tomorrowSettings = loadSettings("morgen")).BeginInvoke(null, this);
+            new Action(() => _todaySettings = loadSettings("heute")).BeginInvoke(null, this);
+            new Action(() => _tomorrowSettings = loadSettings("morgen")).BeginInvoke(null, this);
         }
 
         private void NotifyIcon_Click(object sender, EventArgs e)
@@ -47,21 +47,18 @@ namespace VertretungsplanUploader
 
         private void btnManualSync_Click(object sender, RoutedEventArgs e)
         {
-            if (todaySettings != null && tomorrowSettings != null && managerToday != null && managerTomorrow != null)
+            if (_todaySettings != null && _tomorrowSettings != null && _managerToday != null && _managerTomorrow != null)
             {
                 try
                 {
-                    managerToday.DeleteAllOnlineFilesAsync();
-                    managerTomorrow.DeleteAllOnlineFilesAsync();
-                    if (File.Exists(todaySettings.LocalPath + "/schuelerplan.html"))
-                        new FileInfo(todaySettings.LocalPath + "/schuelerplan.html").LastWriteTime = DateTime.Now;
-                    if (File.Exists(tomorrowSettings.LocalPath + "/schuelerplan.html"))
-                        new FileInfo(tomorrowSettings.LocalPath + "/schuelerplan.html").LastWriteTime = DateTime.Now;
+                    _managerToday.DeleteAllOnlineFilesAsync();
+                    _managerTomorrow.DeleteAllOnlineFilesAsync();
+                    if (File.Exists(_todaySettings.FilePath))
+                        _managerToday.FileLastEdited = DateTime.Now;
+                    if (File.Exists(_tomorrowSettings.FilePath))
+                        _managerTomorrow.FileLastEdited = DateTime.Now;
                 }
-                catch (IOException ex)
-                {
-                    AppendMessageToLog("Es ist ein Fehler beim Ändern der letzten Bearbeitungszeit aufgetreten: " + ex.Message);
-                }
+                catch (IOException ex) { AppendMessageToLog("Es ist ein Fehler beim Ändern der letzten Bearbeitungszeit aufgetreten: " + ex.Message); }
             }
             else
                 AppendMessageToLog("Vor einem manuellen Sync müssen alle Einstellungen korrekt eingestellt sein!");
@@ -76,19 +73,19 @@ namespace VertretungsplanUploader
                 AppendMessageToLog("Es fehlen einige Einstellungen. Die Einstellungen konnten nicht gespeichert werden!");
                 return;
             }
-            todaySettings = new Settings(tbLocalToday.Text, tbFtpFolder.Text, tbFtpUser.Text, tbFtpPassword.Password, "heute");
-            tomorrowSettings = new Settings(tbLocalTomorrow.Text, tbFtpFolder.Text, tbFtpUser.Text, tbFtpPassword.Password, "morgen");
+            _todaySettings = new Settings(tbLocalToday.Text, tbFtpFolder.Text, tbFtpUser.Text, tbFtpPassword.Password, "heute");
+            _tomorrowSettings = new Settings(tbLocalTomorrow.Text, tbFtpFolder.Text, tbFtpUser.Text, tbFtpPassword.Password, "morgen");
 
             AppendMessageToLog("Einstellungen gespeichert!");
 
-            if (managerToday != null)
-                managerToday.changeSettings(todaySettings);
+            if (_managerToday != null)
+                _managerToday.changeSettings(_todaySettings);
             else
-                managerToday = new VertretungsplanManager(todaySettings, this);
-            if (managerTomorrow != null)
-                managerTomorrow.changeSettings(tomorrowSettings);
+                _managerToday = new VertretungsplanManager(_todaySettings, this);
+            if (_managerTomorrow != null)
+                _managerTomorrow.changeSettings(_tomorrowSettings);
             else
-                managerTomorrow = new VertretungsplanManager(tomorrowSettings, this);
+                _managerTomorrow = new VertretungsplanManager(_tomorrowSettings, this);
 
             AppendMessageToLog("Einstellungen an den Uploadmanager übergeben.");
             flyoutSettings.IsOpen = false;
@@ -97,9 +94,9 @@ namespace VertretungsplanUploader
 
         private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (todaySettings != null)
+            if (_todaySettings != null)
                 SaveSettingsToFile("heute");
-            if (tomorrowSettings != null)
+            if (_tomorrowSettings != null)
                 SaveSettingsToFile("morgen");
         }
 
@@ -126,18 +123,18 @@ namespace VertretungsplanUploader
                 {
                     if (pExtension.Equals("heute"))
                     {
-                        Dispatcher.BeginInvoke(new Action(() => tbLocalToday.Text = result.LocalPath));
+                        Dispatcher.BeginInvoke(new Action(() => tbLocalToday.Text = result.LocalFolder));
                         Dispatcher.BeginInvoke(new Action(() => tbFtpFolder.Text = result.RemotePath));
                         Dispatcher.BeginInvoke(new Action(() => tbFtpUser.Text = result.Username));
                         Dispatcher.BeginInvoke(new Action(() => tbFtpPassword.Password = result.Password));
-                        managerToday = new VertretungsplanManager(result, this);
+                        _managerToday = new VertretungsplanManager(result, this);
                     }
                     else {
-                        Dispatcher.BeginInvoke(new Action(() => tbLocalTomorrow.Text = result.LocalPath));
+                        Dispatcher.BeginInvoke(new Action(() => tbLocalTomorrow.Text = result.LocalFolder));
                         Dispatcher.BeginInvoke(new Action(() => tbFtpFolder.Text = result.RemotePath));
                         Dispatcher.BeginInvoke(new Action(() => tbFtpUser.Text = result.Username));
                         Dispatcher.BeginInvoke(new Action(() => tbFtpPassword.Password = result.Password));
-                        managerTomorrow = new VertretungsplanManager(result, this);
+                        _managerTomorrow = new VertretungsplanManager(result, this);
                     }
 
                 }
@@ -154,9 +151,9 @@ namespace VertretungsplanUploader
             IFormatter formatter = new BinaryFormatter();
             Stream stream = new FileStream("./settings" + pExtension + ".bin", FileMode.Create, FileAccess.Write, FileShare.None);
             if (pExtension.Equals("heute"))
-                formatter.Serialize(stream, todaySettings);
+                formatter.Serialize(stream, _todaySettings);
             else
-                formatter.Serialize(stream, tomorrowSettings);
+                formatter.Serialize(stream, _tomorrowSettings);
             stream.Close();
         }
     }
