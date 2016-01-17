@@ -32,7 +32,7 @@ namespace Vertretungsplan_Uploader
             try { ftpWebResponse = (FtpWebResponse)ftpWebRequest.GetResponse(); }
             catch (WebException ex) { Debug.WriteLine(string.Format("A webexception occured while trying to upload {0}: {1}", pLocalFile, ex.Message), "FTP-Tools"); return; }
 
-            Debug.WriteLine(string.Format("Uploaded file successfully (response status: {0})" ,ftpWebResponse.StatusDescription, "FTP-Tools");
+            Debug.WriteLine(string.Format("Uploaded file successfully (response status: {0})" ,ftpWebResponse.StatusDescription, "FTP-Tools"));
             ftpWebResponse.Close();
         }
 
