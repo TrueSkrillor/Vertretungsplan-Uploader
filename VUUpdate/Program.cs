@@ -19,6 +19,13 @@ namespace VUUpdate
                 return new Version(versionInfo.ProductVersion);
             }
         }
+        private static string BaseDir
+        {
+            get
+            {
+                return AppDomain.CurrentDomain.BaseDirectory;
+            }
+        }
 
         static void Main(string[] args)
         {
@@ -26,7 +33,7 @@ namespace VUUpdate
             do
             {
                 performedUpdate = false;
-                for (int versionType = 0; versionType < 4 || performedUpdate; versionType++)
+                for (int versionType = 0; versionType < 4 && !performedUpdate; versionType++)
                 {
                     Console.WriteLine("Checking for new update, VersionType: " + versionType);
                     if (CheckForUpdate((VersionTypes)versionType))
@@ -44,22 +51,26 @@ namespace VUUpdate
         {
             KillProcessIfRunning();
             DownloadAndApplyUpdate(newVersionType);
-            Process.Start("./Vertretungsplan_Uploader.exe");
+            Process.Start(BaseDir + "Vertretungsplan_Uploader.exe");
         }
 
         private static void DownloadAndApplyUpdate(VersionTypes newVersionType)
         {
             WebClient downloadClient = new WebClient();
-            downloadClient.DownloadFile(string.Format(urlBase, GetNewVersion(newVersionType)), "./temp.zip");
+            downloadClient.DownloadFile(string.Format(urlBase, GetNewVersion(newVersionType)), BaseDir + "temp.zip");
             Console.WriteLine("Update downloaded successfully");
 
-            ZipFile.ExtractToDirectory("./temp.zip", "temp");
-            foreach(string filename in Directory.GetFiles("./temp"))
+            ZipFile.ExtractToDirectory(BaseDir + "temp.zip", "temp");
+            File.Delete(BaseDir + "temp.zip");
+
+            foreach(string filename in Directory.GetFiles(BaseDir + "temp"))
             {
-                if (File.Exists("./" + filename))
-                    File.Delete("./" + filename);
-                File.Move("./temp/" + filename, "./" + filename);
-                Console.WriteLine("Successfully updated " + filename);
+                var path = filename.Split('\\');
+                var file = path[path.Length - 1];
+                if (File.Exists(BaseDir + file))
+                    File.Delete(BaseDir + file);
+                File.Move(filename, BaseDir + file);
+                Console.WriteLine("Successfully updated " + file);
             }
             Directory.Delete("./temp");
             Console.WriteLine("Update completed");

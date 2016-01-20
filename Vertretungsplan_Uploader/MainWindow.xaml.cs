@@ -26,7 +26,6 @@ namespace VertretungsplanUploader
 
         public MainWindow()
         {
-            UpdateChecker_Elapsed(null, null);
             InitializeComponent();
 
             notifyIcon = new NotifyIcon();
@@ -46,8 +45,8 @@ namespace VertretungsplanUploader
 
         private void UpdateChecker_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            if (File.Exists("./VUUpdater.exe"))
-                Process.Start("./VUUpdater.exe");
+            if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "VUUpdate.exe"))
+                Process.Start(AppDomain.CurrentDomain.BaseDirectory + "VUUpdate.exe");
             else 
                 AppendMessageToLog("Es wurde kein Updater gefunden!");
         }
