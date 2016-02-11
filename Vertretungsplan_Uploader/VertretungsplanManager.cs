@@ -110,7 +110,7 @@ namespace Vertretungsplan_Uploader
                 Log("Die Datei enthält keine Merkmale, stoppe Bearbeitung!");
                 return null;
             }
-            filename += "_" + _settings.SavePostfix;
+            filename += "_" + _settings.SavePostfix.ToString().ToLower();
 
             if (File.Exists(_settings.LocalFolder + filename + ".html"))
                 File.Delete(_settings.LocalFolder + filename + ".html");
@@ -126,7 +126,7 @@ namespace Vertretungsplan_Uploader
             {
                 try
                 {
-                    _ftpTools.DeleteFile(string.Format("{0}{1}_{2}.html", _settings.RemotePath, name, _settings.SavePostfix));
+                    _ftpTools.DeleteFile(string.Format("{0}{1}_{2}.html", _settings.RemotePath, name, _settings.SavePostfix.ToString().ToLower()));
                 }
                 catch (Exception e) { Debug.WriteLine(e.Message); }
             }

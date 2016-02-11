@@ -34,8 +34,8 @@ namespace VertretungsplanUploader
             notifyIcon.Visible = false;
             notifyIcon.Click += NotifyIcon_Click;
 
-            new Action(() => _todaySettings = loadSettings("heute")).BeginInvoke(null, this);
-            new Action(() => _tomorrowSettings = loadSettings("morgen")).BeginInvoke(null, this);
+            new Action(() => _todaySettings = LoadSettings(Types.Heute)).BeginInvoke(null, this);
+            new Action(() => _tomorrowSettings = LoadSettings(Types.Morgen)).BeginInvoke(null, this);
 
             updateChecker = new System.Timers.Timer(3600000);
             updateChecker.AutoReset = true;
@@ -87,8 +87,8 @@ namespace VertretungsplanUploader
                 AppendMessageToLog("Es fehlen einige Einstellungen. Die Einstellungen konnten nicht gespeichert werden!");
                 return;
             }
-            _todaySettings = new Settings(tbLocalToday.Text, tbFtpFolder.Text, tbFtpUser.Text, tbFtpPassword.Password, "heute");
-            _tomorrowSettings = new Settings(tbLocalTomorrow.Text, tbFtpFolder.Text, tbFtpUser.Text, tbFtpPassword.Password, "morgen");
+            _todaySettings = new Settings(tbLocalToday.Text, tbFtpFolder.Text, tbFtpUser.Text, tbFtpPassword.Password, Types.Heute);
+            _tomorrowSettings = new Settings(tbLocalTomorrow.Text, tbFtpFolder.Text, tbFtpUser.Text, tbFtpPassword.Password, Types.Morgen);
 
             AppendMessageToLog("Einstellungen gespeichert!");
 
@@ -109,9 +109,9 @@ namespace VertretungsplanUploader
         private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (_todaySettings != null)
-                SaveSettingsToFile("heute");
+                SaveSettingsToFile(Types.Heute);
             if (_tomorrowSettings != null)
-                SaveSettingsToFile("morgen");
+                SaveSettingsToFile(Types.Morgen);
         }
 
         private void MetroWindow_StateChanged(object sender, EventArgs e)
@@ -124,18 +124,18 @@ namespace VertretungsplanUploader
 
         public void AppendMessageToLog(string pMessage) => Dispatcher.BeginInvoke(new Action(() => tbStatus.Text = tbStatus.Text + String.Format("[{0}][{1}]\t{2}\n", DateTime.Now.ToShortDateString(), DateTime.Now.ToShortTimeString(), pMessage)));
 
-        private Settings loadSettings(string pExtension)
+        private Settings LoadSettings(Types pExtension)
         {
-            if (File.Exists("./settings" + pExtension + ".bin"))
+            if (File.Exists("./settings" + pExtension.ToString().ToLower() + ".bin"))
             {
                 IFormatter formatter = new BinaryFormatter();
-                Stream stream = new FileStream("./settings" + pExtension + ".bin", FileMode.Open, FileAccess.Read, FileShare.Read);
+                Stream stream = new FileStream("./settings" + pExtension.ToString().ToLower() + ".bin", FileMode.Open, FileAccess.Read, FileShare.Read);
                 Settings result = (Settings)formatter.Deserialize(stream);
                 stream.Close();
 
                 if (result != null)
                 {
-                    if (pExtension.Equals("heute"))
+                    if (pExtension == Types.Heute)
                     {
                         Dispatcher.BeginInvoke(new Action(() => tbLocalToday.Text = result.LocalFolder));
                         Dispatcher.BeginInvoke(new Action(() => tbFtpFolder.Text = result.RemotePath));
@@ -153,18 +153,18 @@ namespace VertretungsplanUploader
 
                 }
 
-                AppendMessageToLog("Einstellungen erfolgreich aus settings" + pExtension + ".bin geladen");
+                AppendMessageToLog("Einstellungen erfolgreich aus settings" + pExtension.ToString().ToLower() + ".bin geladen");
                 return result;
             }
-            AppendMessageToLog("Keine vorherigen Einstellungen für " + pExtension + " gefunden, bitte konfigurieren!");
+            AppendMessageToLog("Keine vorherigen Einstellungen für " + pExtension.ToString().ToLower() + " gefunden, bitte konfigurieren!");
             return null;
         }
 
-        private void SaveSettingsToFile(string pExtension)
+        private void SaveSettingsToFile(Types pExtension)
         {
             IFormatter formatter = new BinaryFormatter();
-            Stream stream = new FileStream("./settings" + pExtension + ".bin", FileMode.Create, FileAccess.Write, FileShare.None);
-            if (pExtension.Equals("heute"))
+            Stream stream = new FileStream("./settings" + pExtension.ToString().ToLower() + ".bin", FileMode.Create, FileAccess.Write, FileShare.None);
+            if (pExtension == Types.Heute)
                 formatter.Serialize(stream, _todaySettings);
             else
                 formatter.Serialize(stream, _tomorrowSettings);

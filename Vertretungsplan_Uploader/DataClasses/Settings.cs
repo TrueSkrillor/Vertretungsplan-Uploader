@@ -9,7 +9,7 @@ namespace Vertretungsplan_Uploader.DataClasses
         public string RemotePath { get; }
         public string Username { get; }
         public string Password { get; }
-        public string SavePostfix { get; }
+        public Types SavePostfix { get; }
         public string FilePath
         {
             get
@@ -18,7 +18,7 @@ namespace Vertretungsplan_Uploader.DataClasses
             }
         }
 
-        public Settings(string pLocal, string pRemote, string pUser, string pPass, string pPost)
+        public Settings(string pLocal, string pRemote, string pUser, string pPass, Types pPost)
         {
             LocalFolder = pLocal;
             RemotePath = pRemote;
