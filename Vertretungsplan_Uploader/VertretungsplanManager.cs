@@ -11,75 +11,87 @@ namespace Vertretungsplan_Uploader
     {
         private Settings _settings;
         private FtpTools _ftpTools;
-        private MainWindow _rootWindow;
-        private DateTime _currentFileEdit;
+        private MainWindow _window;
         private Timer _changeChecker;
-        private string _onlineFilename;
-        public DateTime FileLastEdited
+        private string _onlineToday;
+        private string _onlineTomorrow;
+        private DateTime _onlineFileEditToday;
+        private DateTime _onlineFileEditTomorrow;
+        public DateTime TodayLastEdited
         {
-            get { return new FileInfo(_settings.FilePath).LastWriteTime; }
-            set { new FileInfo(_settings.FilePath).LastWriteTime = value; }
+            get { return new FileInfo(_settings.FilePathToday).LastWriteTime; }
+            set { new FileInfo(_settings.FilePathToday).LastWriteTime = value; }
         }
-        private readonly string[] _filenames = new string[]
+        public DateTime TomorrowLastEdited
         {
-            "schuelerplan_mo",
-            "schuelerplan_di",
-            "schuelerplan_mi",
-            "schuelerplan_do",
-            "schuelerplan_fr"
-        };
+            get { return new FileInfo(_settings.FilePathTomorrow).LastWriteTime; }
+            set { new FileInfo(_settings.FilePathTomorrow).LastWriteTime = value; }
+        }
+        private readonly string[] _daysOfWeek = new string[] { "mo", "di", "mi", "do", "fr" };
 
-        public VertretungsplanManager(Settings pSettings, MainWindow pRoot)
+        public VertretungsplanManager(Settings pSettings, MainWindow pWindow)
         {
-            _rootWindow = pRoot;
+            _window = pWindow;
             _settings = pSettings;
             _ftpTools = new FtpTools(_settings);
 
             DeleteAllOnlineFilesAsync();
-            _onlineFilename = "";
+            _onlineToday = "";
+            _onlineTomorrow = "";
 
             _changeChecker = new Timer(10000);
             _changeChecker.AutoReset = true;
             _changeChecker.Elapsed += ChangeChecker_Elapsed;
-            _currentFileEdit = FileLastEdited;
+            _onlineFileEditToday = DateTime.MinValue;
+            _onlineFileEditTomorrow = DateTime.MinValue;
             _changeChecker.Start();
 
-            if (File.Exists(_settings.FilePath))
-                FileLastEdited = DateTime.Now;
+            if (File.Exists(_settings.FilePathToday))
+                TodayLastEdited = DateTime.Now;
+            if (File.Exists(_settings.FilePathTomorrow))
+                TomorrowLastEdited = DateTime.Now;
         }
 
         private void ChangeChecker_Elapsed(object sender, ElapsedEventArgs e)
         {
-            if(File.Exists(_settings.FilePath))
+            CheckForChanges(true);
+            CheckForChanges(false);
+        }
+
+        private void CheckForChanges(bool pToday)
+        {
+            if (File.Exists(pToday ? _settings.FilePathToday : _settings.FilePathTomorrow))
             {
-                if (_currentFileEdit.CompareTo(FileLastEdited) >= 0)
+                if ((pToday ? _onlineFileEditToday : _onlineFileEditTomorrow).CompareTo(pToday ? TodayLastEdited : TomorrowLastEdited) >= 0)
                     return;
-                _currentFileEdit = FileLastEdited;
-                Log(string.Format("Es wurde eine Änderung im Pfad {0} erkannt, letzte Änderung: {1}", _settings.FilePath, _currentFileEdit.ToLongTimeString()));
+
+                Log(string.Format("Es wurde eine Änderung im Pfad {0} erkannt, letzte Änderung: {1}", pToday ? _settings.LocalFolderToday : _settings.LocalFolderTomorrow, pToday ? TodayLastEdited : TomorrowLastEdited));
 
                 DeleteAllOnlineFiles();
 
-                _onlineFilename = RenameChangedFile();
-                if (_onlineFilename == null)
+                string onlineName = RenameChangedFile(pToday);
+                if (onlineName == null)
                     return;
 
                 try
                 {
-                    Log(string.Format("Datei erfolgreich in {0}.html umbenannt, beginne mit dem Upload...", _onlineFilename));
-                    _ftpTools.UploadFile(_settings.LocalFolder + "/" + _onlineFilename + ".html", _settings.RemotePath + _onlineFilename + ".html");
+                    Log(string.Format("Datei erfolgreich in {0}.html umbenannt, beginne mit dem Upload...", onlineName));
+                    _ftpTools.UploadFile(pToday ? _settings.FilePathToday : _settings.FilePathTomorrow + "/" + onlineName + ".html", _settings.RemotePath + onlineName + ".html");
+                    if (pToday) _onlineFileEditToday = TodayLastEdited; else _onlineFileEditTomorrow = TomorrowLastEdited;
+                    if (pToday) _onlineToday = onlineName; else _onlineTomorrow = onlineName;
                     Log("Datei erfolgreich hochgeladen, lösche temporäre Datei...");
                 }
                 catch (System.Net.WebException wex) { Log("Es ist ein Fehler beim Hochladen der Datei aufgetreten: " + wex.Message); }
                 catch (IOException ioe) { Log("Es ist ein Fehler beim Lesen der Quelldatei aufgetreten: " + ioe.Message); }
                 catch (Exception ex) { Log("Es ist ein unbekannter Fehler aufgetreten: " + ex.Message); }
 
-                File.Delete(_settings.LocalFolder + "/" + _onlineFilename + ".html");
+                File.Delete((pToday ? _settings.LocalFolderToday : _settings.LocalFolderTomorrow) + "/" + onlineName + ".html");
             }
-            else if (!_onlineFilename.Equals(""))
+            else if (!(pToday ? _onlineToday : _onlineTomorrow).Equals(""))
             {
                 Log("Die Datei schuelerplan.html wurde lokal gelöscht. Lösche online...");
-                _ftpTools.DeleteFile(_settings.RemotePath + _onlineFilename + ".html");
-                _onlineFilename = "";
+                _ftpTools.DeleteFile(_settings.RemotePath + (pToday ? _onlineToday : _onlineTomorrow) + ".html");
+                if (pToday) _onlineToday = ""; else _onlineTomorrow = "";
             }
         }
 
@@ -89,32 +101,32 @@ namespace Vertretungsplan_Uploader
             _ftpTools = new FtpTools(_settings);
         }
 
-        public string RenameChangedFile()
+        public string RenameChangedFile(bool pToday)
         {
-            string file = File.ReadAllText(_settings.FilePath, System.Text.Encoding.Default);
-            string filename = "";
+            string file = File.ReadAllText(pToday ? _settings.FilePathToday : _settings.FilePathTomorrow, System.Text.Encoding.Default);
+            string filename = "schuelerplan_";
 
             if (file.Contains("Vertretungsplan f&uuml;r Montag") || file.Contains("Vertretungsplan für Montag"))
-                filename = _filenames[0];
+                filename += _daysOfWeek[0];
             else if (file.Contains("Vertretungsplan f&uuml;r Dienstag") || file.Contains("Vertretungsplan für Dienstag"))
-                filename = _filenames[1];
+                filename += _daysOfWeek[1];
             else if (file.Contains("Vertretungsplan f&uuml;r Mittwoch") || file.Contains("Vertretungsplan für Mittwoch"))
-                filename = _filenames[2];
+                filename += _daysOfWeek[2];
             else if (file.Contains("Vertretungsplan f&uuml;r Donnerstag") || file.Contains("Vertretungsplan für Donnerstag"))
-                filename = _filenames[3];
+                filename += _daysOfWeek[3];
             else if (file.Contains("Vertretungsplan f&uuml;r Freitag") || file.Contains("Vertretungsplan für Freitag"))
-                filename = _filenames[4];
+                filename += _daysOfWeek[4];
 
-            if (filename.Equals(""))
+            if (filename.Equals("schuelerplan_"))
             {
                 Log("Die Datei enthält keine Merkmale, stoppe Bearbeitung!");
                 return null;
             }
-            filename += "_" + _settings.SavePostfix.ToString().ToLower();
+            filename += "_" + (pToday ? "heute" : "morgen");
 
-            if (File.Exists(_settings.LocalFolder + filename + ".html"))
-                File.Delete(_settings.LocalFolder + filename + ".html");
-            File.Copy(_settings.FilePath, _settings.LocalFolder + "/" + filename + ".html", true);
+            if (File.Exists((pToday ? _settings.LocalFolderToday : _settings.LocalFolderTomorrow) + filename + ".html"))
+                File.Delete((pToday ? _settings.LocalFolderToday : _settings.LocalFolderTomorrow) + filename + ".html");
+            File.Copy(pToday ? _settings.FilePathToday : _settings.FilePathTomorrow, (pToday ? _settings.LocalFolderToday : _settings.LocalFolderTomorrow) + "/" + filename + ".html", true);
             return filename;
         }
 
@@ -122,16 +134,19 @@ namespace Vertretungsplan_Uploader
 
         private void DeleteAllOnlineFiles()
         {
-            foreach (string name in _filenames)
+            for (int i = 0; i < 2; i++)
             {
-                try
+                foreach (string day in _daysOfWeek)
                 {
-                    _ftpTools.DeleteFile(string.Format("{0}{1}_{2}.html", _settings.RemotePath, name, _settings.SavePostfix.ToString().ToLower()));
+                    try
+                    {
+                        _ftpTools.DeleteFile(string.Format("{0}schuelerplan_{1}_{2}.html", _settings.RemotePath, day, i == 0 ? "heute" : "morgen"));
+                    }
+                    catch (Exception e) { Debug.WriteLine(e.Message); }
                 }
-                catch (Exception e) { Debug.WriteLine(e.Message); }
             }
         }
 
-        private void Log(string pMessage) => _rootWindow.AppendMessageToLog(pMessage);
+        private void Log(string pMessage) => _window.AppendMessageToLog(pMessage);
     }
 }
