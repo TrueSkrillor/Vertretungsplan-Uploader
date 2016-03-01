@@ -4,6 +4,7 @@ using Vertretungsplan_Uploader.DataClasses;
 using System.IO;
 using VertretungsplanUploader;
 using System.Diagnostics;
+using Vertretungsplan_Uploader.Tools;
 
 namespace Vertretungsplan_Uploader
 {
@@ -67,7 +68,7 @@ namespace Vertretungsplan_Uploader
 
                 Log(string.Format("Es wurde eine Änderung im Pfad {0} erkannt, letzte Änderung: {1}", pToday ? _settings.LocalFolderToday : _settings.LocalFolderTomorrow, pToday ? TodayLastEdited : TomorrowLastEdited));
 
-                DeleteAllOnlineFiles();
+                DeleteOnlineFiles(pToday);
 
                 string onlineName = RenameChangedFile(pToday);
                 if (onlineName == null)
@@ -76,21 +77,27 @@ namespace Vertretungsplan_Uploader
                 try
                 {
                     Log(string.Format("Datei erfolgreich in {0}.html umbenannt, beginne mit dem Upload...", onlineName));
-                    _ftpTools.UploadFile(pToday ? _settings.FilePathToday : _settings.FilePathTomorrow + "/" + onlineName + ".html", _settings.RemotePath + onlineName + ".html");
+                    _ftpTools.UploadFile((pToday ? _settings.LocalFolderToday : _settings.LocalFolderTomorrow) + "/" + onlineName + ".html", _settings.RemotePath + onlineName + ".html");
                     if (pToday) _onlineFileEditToday = TodayLastEdited; else _onlineFileEditTomorrow = TomorrowLastEdited;
                     if (pToday) _onlineToday = onlineName; else _onlineTomorrow = onlineName;
-                    Log("Datei erfolgreich hochgeladen, lösche temporäre Datei...");
+                    Log("Datei erfolgreich hochgeladen, generiere JSON-Datei...");
+                    JsonTools.GenerateJson((pToday ? _settings.LocalFolderToday : _settings.LocalFolderTomorrow), onlineName);
+                    Log("JSON-Datei erstellt, beginne mit dem Upload...");
+                    _ftpTools.UploadFile((pToday ? _settings.LocalFolderToday : _settings.LocalFolderTomorrow) + "/" + onlineName + ".json", _settings.RemotePath + onlineName + ".json");
+                    Log("Lösche temporäre Dateien...");
                 }
                 catch (System.Net.WebException wex) { Log("Es ist ein Fehler beim Hochladen der Datei aufgetreten: " + wex.Message); }
                 catch (IOException ioe) { Log("Es ist ein Fehler beim Lesen der Quelldatei aufgetreten: " + ioe.Message); }
                 catch (Exception ex) { Log("Es ist ein unbekannter Fehler aufgetreten: " + ex.Message); }
 
                 File.Delete((pToday ? _settings.LocalFolderToday : _settings.LocalFolderTomorrow) + "/" + onlineName + ".html");
+                File.Delete((pToday ? _settings.LocalFolderToday : _settings.LocalFolderTomorrow) + "/" + onlineName + ".json");
             }
             else if (!(pToday ? _onlineToday : _onlineTomorrow).Equals(""))
             {
                 Log("Die Datei schuelerplan.html wurde lokal gelöscht. Lösche online...");
                 _ftpTools.DeleteFile(_settings.RemotePath + (pToday ? _onlineToday : _onlineTomorrow) + ".html");
+                _ftpTools.DeleteFile(_settings.RemotePath + (pToday ? _onlineToday : _onlineTomorrow) + ".json");
                 if (pToday) _onlineToday = ""; else _onlineTomorrow = "";
             }
         }
@@ -130,21 +137,23 @@ namespace Vertretungsplan_Uploader
             return filename;
         }
 
-        public void DeleteAllOnlineFilesAsync() => new Action(() => DeleteAllOnlineFiles()).BeginInvoke(null, this);
-
-        private void DeleteAllOnlineFiles()
+        public void DeleteAllOnlineFilesAsync()
         {
-            for (int i = 0; i < 2; i++)
-            {
+            new Action(() => DeleteOnlineFiles(true)).BeginInvoke(null, this);
+            new Action(() => DeleteOnlineFiles(false)).BeginInvoke(null, this);
+        }
+
+        private void DeleteOnlineFiles(bool pToday)
+        {
                 foreach (string day in _daysOfWeek)
                 {
                     try
                     {
-                        _ftpTools.DeleteFile(string.Format("{0}schuelerplan_{1}_{2}.html", _settings.RemotePath, day, i == 0 ? "heute" : "morgen"));
+                        _ftpTools.DeleteFile(string.Format("{0}schuelerplan_{1}_{2}.html", _settings.RemotePath, day, pToday ? "heute" : "morgen"));
+                        _ftpTools.DeleteFile(string.Format("{0}schuelerplan_{1}_{2}.json", _settings.RemotePath, day, pToday ? "heute" : "morgen"));
                     }
                     catch (Exception e) { Debug.WriteLine(e.Message); }
                 }
-            }
         }
 
         private void Log(string pMessage) => _window.AppendMessageToLog(pMessage);
