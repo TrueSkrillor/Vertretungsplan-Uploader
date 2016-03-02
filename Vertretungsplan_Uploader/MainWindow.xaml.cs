@@ -106,7 +106,7 @@ namespace VertretungsplanUploader
             }
         }
 
-        public void AppendMessageToLog(string pMessage) => Dispatcher.BeginInvoke(new Action(() => tbStatus.Text = tbStatus.Text + String.Format("[{0}][{1}]\t{2}\n", DateTime.Now.ToShortDateString(), DateTime.Now.ToShortTimeString(), pMessage)));
+        public void AppendMessageToLog(string pMessage) => Dispatcher.BeginInvoke(new Action(() => tbStatus.AppendText(string.Format("[{0}][{1}]\t{2}\n", DateTime.Now.ToShortDateString(), DateTime.Now.ToShortTimeString(), pMessage))));
 
         private Settings LoadSettings()
         {
