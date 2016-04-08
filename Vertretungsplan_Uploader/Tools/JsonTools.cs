@@ -71,29 +71,29 @@ namespace Vertretungsplan_Uploader.Tools
                                 writer.WritePropertyName("Klasse");
                                 if (currentLine.ToLower().Contains("<b>"))
                                 {
-                                    previous = currentLine.Split('>')[2].Split('<')[0].Replace(" ", "");
+                                    previous = currentLine.Split('>')[2].Split('<')[0].Replace(" ", "").Replace("span", "");
                                     writer.WriteValue(previous);
                                 }
                                 else
                                     writer.WriteValue(previous);
 
                                 writer.WritePropertyName("Stunde");
-                                writer.WriteValue(reader.ReadLine().Split('>')[1].Split('<')[0]);
+                                writer.WriteValue(reader.ReadLine().Split('>')[1].Split('<')[0].Replace("span", ""));
 
                                 writer.WritePropertyName("Vertretung");
-                                writer.WriteValue(reader.ReadLine().Split('>')[1].Split('<')[0]);
+                                writer.WriteValue(reader.ReadLine().Split('>')[1].Split('<')[0].Replace("span", ""));
 
                                 writer.WritePropertyName("Fach");
-                                writer.WriteValue(reader.ReadLine().Split('>')[1].Split('<')[0]);
+                                writer.WriteValue(reader.ReadLine().Split('>')[1].Split('<')[0].Replace("span", ""));
 
                                 writer.WritePropertyName("statt");
-                                writer.WriteValue(reader.ReadLine().Split('>')[1].Split('<')[0]);
+                                writer.WriteValue(reader.ReadLine().Split('>')[1].Split('<')[0].Replace("span", ""));
 
                                 writer.WritePropertyName("Raum");
-                                writer.WriteValue(reader.ReadLine().Split('>')[1].Split('<')[0]);
+                                writer.WriteValue(reader.ReadLine().Split('>')[1].Split('<')[0].Replace("span", ""));
 
                                 writer.WritePropertyName("Sonstiges");
-                                writer.WriteValue(reader.ReadLine().Split('>')[1].Split('<')[0]);
+                                writer.WriteValue(reader.ReadLine().Split('>')[1].Split('<')[0].Replace("span", ""));
                              
                                 writer.WriteEndObject();
                             }
