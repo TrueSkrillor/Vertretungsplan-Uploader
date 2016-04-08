@@ -85,6 +85,9 @@ namespace Vertretungsplan_Uploader
                     Log("JSON-Datei erstellt, beginne mit dem Upload...");
                     _ftpTools.UploadFile((pToday ? _settings.LocalFolderToday : _settings.LocalFolderTomorrow) + "/" + onlineName + ".json", _settings.RemotePath + onlineName + ".json");
                     Log("Lösche temporäre Dateien...");
+
+                    Log("Benachrichtige mobile Endgeräte via Gcm...");
+                    Log("Benarichtigung abgeschlossen, " + GcmTools.SendBroadcast("Ein neuer Vertretungsplan ist jetzt online"));
                 }
                 catch (System.Net.WebException wex) { Log("Es ist ein Fehler beim Hochladen der Datei aufgetreten: " + wex.Message); }
                 catch (IOException ioe) { Log("Es ist ein Fehler beim Lesen der Quelldatei aufgetreten: " + ioe.Message); }
