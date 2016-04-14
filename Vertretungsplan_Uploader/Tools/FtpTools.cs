@@ -6,14 +6,14 @@ using System.Diagnostics;
 
 namespace Vertretungsplan_Uploader
 {
-    public class FtpTools
+    internal class FtpTools
     {
         private NetworkCredential _credentials;
         
-        public FtpTools(string pUser, string pPassword) { _credentials = new NetworkCredential(pUser, pPassword); }
-        public FtpTools(Settings pSettings) : this(pSettings.Username, pSettings.Password) { }
+        internal FtpTools(string pUser, string pPassword) { _credentials = new NetworkCredential(pUser, pPassword); }
+        internal FtpTools(Settings pSettings) : this(pSettings.Username, pSettings.Password) { }
 
-        public void UploadFile(string pLocalFile, string pRemoteFile)
+        internal void UploadFile(string pLocalFile, string pRemoteFile)
         {
             Debug.WriteLine(string.Format("Request to upload {0} to {1}", pLocalFile, pRemoteFile), "FTP-Tools");
             FtpWebRequest ftpWebRequest = (FtpWebRequest)WebRequest.Create(pRemoteFile);
@@ -36,7 +36,7 @@ namespace Vertretungsplan_Uploader
             ftpWebResponse.Close();
         }
 
-        public void DeleteFile(string pRemoteFile)
+        internal void DeleteFile(string pRemoteFile)
         {
             Debug.WriteLine(string.Format("Requested to delete {0}", pRemoteFile), "FTP-Tools");
             FtpWebRequest ftpWebRequest = (FtpWebRequest)WebRequest.Create(pRemoteFile);

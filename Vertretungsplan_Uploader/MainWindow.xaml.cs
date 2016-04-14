@@ -83,7 +83,7 @@ namespace VertretungsplanUploader
                 AppendMessageToLog("Es fehlen einige Einstellungen. Die Einstellungen konnten nicht gespeichert werden!");
                 return;
             }
-            _settings = new Settings(tbLocalToday.Text, tbLocalTomorrow.Text, tbFtpFolder.Text, tbFtpUser.Text, tbFtpPassword.Password);
+            _settings = new Settings(tbLocalToday.Text, tbLocalTomorrow.Text, tbFtpFolder.Text, tbFtpUser.Text, tbFtpPassword.Password, tbGcmApiKey.Text);
 
             AppendMessageToLog("Einstellungen gespeichert!");
 

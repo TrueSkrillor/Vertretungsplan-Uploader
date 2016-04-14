@@ -3,30 +3,32 @@
 namespace Vertretungsplan_Uploader.DataClasses
 {
     [Serializable]
-    public class Settings
+    internal class Settings
     {
-        public string LocalFolderToday { get; }
-        public string LocalFolderTomorrow { get; }
-        public string RemotePath { get; }
-        public string Username { get; }
-        public string Password { get; }
+        internal string LocalFolderToday { get; }
+        internal string LocalFolderTomorrow { get; }
+        internal string RemotePath { get; }
+        internal string Username { get; }
+        internal string Password { get; }
+        internal string GcmApiKey { get; }
 
-        public string FilePathToday
+        internal string FilePathToday
         {
             get { return LocalFolderToday + "/schuelerplan.html"; }
         }
-        public string FilePathTomorrow
+        internal string FilePathTomorrow
         {
             get { return LocalFolderTomorrow + "/schuelerplan.html"; }
         }
 
-        public Settings(string pLocalToday, string pLocalTomorrow, string pRemote, string pUser, string pPass)
+        internal Settings(string pLocalToday, string pLocalTomorrow, string pRemote, string pUser, string pPass, string pGcmKey)
         {
             LocalFolderToday = pLocalToday;
             LocalFolderTomorrow = pLocalTomorrow;
             RemotePath = pRemote;
             Username = pUser;
             Password = pPass;
+            GcmApiKey = pGcmKey;
         }
     }
 }

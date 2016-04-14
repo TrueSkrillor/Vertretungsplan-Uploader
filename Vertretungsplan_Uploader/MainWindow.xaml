@@ -15,6 +15,7 @@
                         <RowDefinition />
                         <RowDefinition />
                         <RowDefinition />
+                        <RowDefinition />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
@@ -25,7 +26,8 @@
                     <Label Content="FTP-Verzeichnis:" Grid.Row="2" Grid.Column="0" FontWeight="SemiBold" FontSize="13" />
                     <Label Content="FTP-Benutzername:" Grid.Row="3" Grid.Column="0" FontWeight="SemiBold" FontSize="13" />
                     <Label Content="FTP-Passwort:" Grid.Row="4" Grid.Column="0" FontWeight="SemiBold" FontSize="13" />
-                    <Button Name="btnSaveSettings" Content="Speichern" Grid.Row="5" Grid.Column="0" 
+                    <Label Content="GCM API-Key:" Grid.Row="5" Grid.Column="0" FontWeight="SemiBold" FontSize="13" />
+                    <Button Name="btnSaveSettings" Content="Speichern" Grid.Row="6" Grid.Column="0" 
                             Grid.ColumnSpan="2" FontWeight="SemiBold" FontSize="13" Width="150" 
                             VerticalAlignment="Bottom" Height="40" HorizontalAlignment="Right" Click="btnSaveSettings_Click"/>
                     <TextBox Name="tbLocalToday" Grid.Row="0" Grid.Column="1" Controls:TextBoxHelper.Watermark="Lokaler Pfad für heute" Height="20" VerticalAlignment="Top" Margin="0, 2" MaxLines="1"/>
@@ -33,6 +35,7 @@
                     <TextBox Name="tbFtpFolder" Grid.Row="2" Grid.Column="1" Controls:TextBoxHelper.Watermark="FTP-Server/Verzeichnis des Vertretungsplans" Height="20" VerticalAlignment="Top" Margin="0, 2" MaxLines="1"/>
                     <TextBox Name="tbFtpUser" Grid.Row="3" Grid.Column="1" Controls:TextBoxHelper.Watermark="FTP-Benutzer für diesen Server" Height="20" VerticalAlignment="Top" Margin="0, 2" MaxLines="1"/>
                     <PasswordBox Name="tbFtpPassword" Grid.Row="4" Grid.Column="1" Controls:PasswordBoxHelper.CapsLockIcon="CAPS" Controls:TextBoxHelper.Watermark="FTP-Passwort für diesen Server" Height="20" VerticalAlignment="Top" Margin="0, 2" PasswordChar="*"/>
+                    <TextBox Name="tbGcmApiKey" Grid.Row="5" Grid.Column="1" Controls:TextBoxHelper.Watermark="API-Key für das GCM-System" Height="20" VerticalAlignment="Top" Margin="0, 2" MaxLines="1" />
                 </Grid>
             </Controls:Flyout>
         </Controls:FlyoutsControl>

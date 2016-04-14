@@ -8,7 +8,7 @@ using Vertretungsplan_Uploader.Tools;
 
 namespace Vertretungsplan_Uploader
 {
-    public class VertretungsplanManager
+    internal class VertretungsplanManager
     {
         private Settings _settings;
         private FtpTools _ftpTools;
@@ -18,23 +18,25 @@ namespace Vertretungsplan_Uploader
         private string _onlineTomorrow;
         private DateTime _onlineFileEditToday;
         private DateTime _onlineFileEditTomorrow;
-        public DateTime TodayLastEdited
+        private GcmTools _gcmTools;
+        internal DateTime TodayLastEdited
         {
             get { return new FileInfo(_settings.FilePathToday).LastWriteTime; }
             set { new FileInfo(_settings.FilePathToday).LastWriteTime = value; }
         }
-        public DateTime TomorrowLastEdited
+        internal DateTime TomorrowLastEdited
         {
             get { return new FileInfo(_settings.FilePathTomorrow).LastWriteTime; }
             set { new FileInfo(_settings.FilePathTomorrow).LastWriteTime = value; }
         }
         private readonly string[] _daysOfWeek = new string[] { "mo", "di", "mi", "do", "fr" };
 
-        public VertretungsplanManager(Settings pSettings, MainWindow pWindow)
+        internal VertretungsplanManager(Settings pSettings, MainWindow pWindow)
         {
             _window = pWindow;
             _settings = pSettings;
             _ftpTools = new FtpTools(_settings);
+            _gcmTools = new GcmTools(_settings.GcmApiKey);
 
             DeleteAllOnlineFilesAsync();
             _onlineToday = "";
@@ -87,7 +89,7 @@ namespace Vertretungsplan_Uploader
                     Log("Lösche temporäre Dateien...");
 
                     Log("Benachrichtige mobile Endgeräte via Gcm...");
-                    Log("Benarichtigung abgeschlossen, " + GcmTools.SendBroadcast("Ein neuer Vertretungsplan ist jetzt online"));
+                    Log("Benarichtigung abgeschlossen, " + _gcmTools.SendBroadcast("Ein neuer Vertretungsplan ist jetzt online"));
                 }
                 catch (System.Net.WebException wex) { Log("Es ist ein Fehler beim Hochladen der Datei aufgetreten: " + wex.Message); }
                 catch (IOException ioe) { Log("Es ist ein Fehler beim Lesen der Quelldatei aufgetreten: " + ioe.Message); }
@@ -111,7 +113,7 @@ namespace Vertretungsplan_Uploader
             _ftpTools = new FtpTools(_settings);
         }
 
-        public string RenameChangedFile(bool pToday)
+        internal string RenameChangedFile(bool pToday)
         {
             string file = File.ReadAllText(pToday ? _settings.FilePathToday : _settings.FilePathTomorrow, System.Text.Encoding.Default);
             string filename = "schuelerplan_";
@@ -140,7 +142,7 @@ namespace Vertretungsplan_Uploader
             return filename;
         }
 
-        public void DeleteAllOnlineFilesAsync()
+        internal void DeleteAllOnlineFilesAsync()
         {
             new Action(() => DeleteOnlineFiles(true)).BeginInvoke(null, this);
             new Action(() => DeleteOnlineFiles(false)).BeginInvoke(null, this);

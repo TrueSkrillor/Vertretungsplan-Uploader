@@ -5,11 +5,16 @@ using System.IO;
 
 namespace Vertretungsplan_Uploader.Tools
 {
-    internal static class GcmTools
+    internal class GcmTools
     {
-        private static readonly string API_KEY = "API_KEY";
+        private readonly string API_KEY;
 
-        internal static string SendBroadcast(string message)
+        internal GcmTools(string pApiKey)
+        {
+            API_KEY = pApiKey;
+        }
+
+        internal string SendBroadcast(string message)
         {
             JObject jGcmData = new JObject();
             JObject jData = new JObject();
