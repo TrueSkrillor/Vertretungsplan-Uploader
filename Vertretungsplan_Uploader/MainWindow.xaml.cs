@@ -7,7 +7,6 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
 using System.Windows.Forms;
-using System.Diagnostics;
 
 namespace VertretungsplanUploader
 {
@@ -18,7 +17,6 @@ namespace VertretungsplanUploader
     {
         private Settings _settings;
         private VertretungsplanManager _manager;
-        private System.Timers.Timer updateChecker;
 
         private NotifyIcon notifyIcon;
 
@@ -33,20 +31,8 @@ namespace VertretungsplanUploader
             notifyIcon.Click += NotifyIcon_Click;
 
             new Action(() => _settings = LoadSettings()).BeginInvoke(null, this);
-
-            updateChecker = new System.Timers.Timer(3600000);
-            updateChecker.AutoReset = true;
-            updateChecker.Elapsed += UpdateChecker_Elapsed;
-            updateChecker.Start();
         }
 
-        private void UpdateChecker_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-        {
-            if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "VUUpdate.exe"))
-                Process.Start(AppDomain.CurrentDomain.BaseDirectory + "VUUpdate.exe");
-            else 
-                AppendMessageToLog("Es wurde kein Updater gefunden!");
-        }
         private void NotifyIcon_Click(object sender, EventArgs e)
         {
             ShowInTaskbar = true;
