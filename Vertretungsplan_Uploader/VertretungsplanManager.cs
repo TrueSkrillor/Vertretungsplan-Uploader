@@ -5,6 +5,7 @@ using System.IO;
 using VertretungsplanUploader;
 using System.Diagnostics;
 using Vertretungsplan_Uploader.Tools;
+using System.Net;
 
 namespace Vertretungsplan_Uploader
 {
@@ -70,9 +71,11 @@ namespace Vertretungsplan_Uploader
                 if ((pToday ? _onlineFileEditToday : _onlineFileEditTomorrow).CompareTo(pToday ? TodayLastEdited : TomorrowLastEdited) >= 0)
                     return;
 
-                Log(string.Format(Resources.DETECTED_CHANGE, pToday ? Settings.Default.LocalFolderToday : Settings.Default.LocalFolderTomorrow, pToday ? TodayLastEdited : TomorrowLastEdited));
+                Log(string.Format(Resources.DETECTED_CHANGE, pToday ? Settings.Default.LocalFolderToday : Settings.Default.LocalFolderTomorrow, pToday ? TodayLastEdited.ToShortTimeString() : TomorrowLastEdited.ToShortTimeString()));
 
                 DeleteOnlineFiles(pToday);
+                if (File.Exists((pToday ? Settings.Default.LocalFolderToday : Settings.Default.LocalFolderTomorrow) + "/web/schuelerplan.html"))
+                    File.Delete((pToday ? Settings.Default.LocalFolderToday : Settings.Default.LocalFolderTomorrow) + "/web/schuelerplan.html");
 
                 string onlineName = RenameChangedFile(pToday);
                 if (onlineName == null)
@@ -89,7 +92,10 @@ namespace Vertretungsplan_Uploader
                     Log(Resources.DELETE_TEMPORARY_FILES);
 
                     Log(Resources.NOTIFYING_MOBILE_DEVICES);
-                    //Log(string.Format(Resources.NOTIFICATION_COMPLETE, _gcmTools.SendBroadcast(Resources.NOTIFICATION_NEW_VP_ONLINE)));
+                    Log(string.Format(Resources.NOTIFICATION_COMPLETE, _gcmTools.SendBroadcast(Resources.NOTIFICATION_NEW_VP_ONLINE)));
+
+                    Log(Resources.DOWNLOADING_REFRESHED_VP);
+                    DownloadFile("https://heriburg-gymnasium.de/images/plaene/VPAnzeige.php?display=" + (pToday ? "heute" : "morgen"), (pToday ? Settings.Default.LocalFolderToday : Settings.Default.LocalFolderTomorrow) + "/web/schuelerplan.html");
                 }
                 catch (System.Net.WebException wex) { Log(string.Format(Resources.ERROR_UPLOADING_FILE,  wex.Message)); }
                 catch (IOException ioe) { Log(string.Format(Resources.ERROR_READING_SOURCE_FILE,  ioe.Message)); }
@@ -102,6 +108,8 @@ namespace Vertretungsplan_Uploader
             {
                 Log(Resources.DELETED_LOCAL_FILE);
                 _ftpTools.DeleteFile(Settings.Default.FtpPath + (pToday ? _onlineToday : _onlineTomorrow) + ".json");
+                if (File.Exists((pToday ? Settings.Default.LocalFolderToday : Settings.Default.LocalFolderTomorrow) + "/web/schuelerplan.html"))
+                    File.Delete((pToday ? Settings.Default.LocalFolderToday : Settings.Default.LocalFolderTomorrow) + "/web/schuelerplan.html");
                 if (pToday) _onlineToday = ""; else _onlineTomorrow = "";
             }
         }
@@ -159,5 +167,18 @@ namespace Vertretungsplan_Uploader
         }
 
         private void Log(string pMessage) => _window.AppendMessageToLog(pMessage);
+
+        private void DownloadFile(string pUrl, string pDestination)
+        {
+            using (WebClient client = new WebClient())
+            {
+                client.Encoding = System.Text.Encoding.UTF8;
+                string web = client.DownloadString(pUrl);
+                web = web.Replace("ö", "&ouml;").Replace("ü", "&uuml;").Replace("ä", "&auml;").Replace("Ä", "&Auml;").Replace("Ü", "&Uuml;").Replace("Ö", "&Ouml;").Replace("ß", "&szlig;");
+
+                File.WriteAllText(pDestination, web, System.Text.Encoding.UTF8);
+                Log(Resources.SUCCESSFULLY_DOWNLOADED_VP);
+            }
+        }
     }
 }

@@ -88,6 +88,15 @@ namespace Vertretungsplan_Uploader.Properties {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Lade aktualisierten Vertretungsplan in lokales Verzeichnis herunter... ähnelt.
+        /// </summary>
+        internal static string DOWNLOADING_REFRESHED_VP {
+            get {
+                return ResourceManager.GetString("DOWNLOADING_REFRESHED_VP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Es ist ein Fehler beim Ändern der letzten Bearbeitungszeit aufgetreten: ähnelt.
         /// </summary>
         internal static string ERROR_CHANGING_LAST_EDIT_TIME {
@@ -229,6 +238,15 @@ namespace Vertretungsplan_Uploader.Properties {
         internal static string SETTINGS_DELIVERED_TO_MANAGER {
             get {
                 return ResourceManager.GetString("SETTINGS_DELIVERED_TO_MANAGER", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Download des Vertretungsplans erfolgreich beendet. ähnelt.
+        /// </summary>
+        internal static string SUCCESSFULLY_DOWNLOADED_VP {
+            get {
+                return ResourceManager.GetString("SUCCESSFULLY_DOWNLOADED_VP", resourceCulture);
             }
         }
         

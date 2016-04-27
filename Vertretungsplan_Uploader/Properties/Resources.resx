@@ -181,4 +181,10 @@
   <data name="NO_CHARACTERISTICS_FOUND" xml:space="preserve">
     <value>Die Datei enthält keine Merkmale, stoppe Bearbeitung!</value>
   </data>
+  <data name="DOWNLOADING_REFRESHED_VP" xml:space="preserve">
+    <value>Lade aktualisierten Vertretungsplan in lokales Verzeichnis herunter...</value>
+  </data>
+  <data name="SUCCESSFULLY_DOWNLOADED_VP" xml:space="preserve">
+    <value>Download des Vertretungsplans erfolgreich beendet.</value>
+  </data>
 </root>

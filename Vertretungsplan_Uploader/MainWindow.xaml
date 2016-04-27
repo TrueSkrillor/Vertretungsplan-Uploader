@@ -29,7 +29,7 @@
                     <Label Content="FTP-Passwort:" Grid.Row="4" Grid.Column="0" FontWeight="SemiBold" FontSize="13"/>
                     <Label Content="GCM API-Key:" Grid.Row="5" Grid.Column="0" FontWeight="SemiBold" FontSize="13" />
                     <Button Name="btnSaveSettings" Content="Speichern" Grid.Row="6" Grid.Column="0" 
-                            Grid.ColumnSpan="2" FontWeight="SemiBold" FontSize="13" Width="150" 
+                            Grid.ColumnSpan="3" FontWeight="SemiBold" FontSize="13" Width="150" 
                             VerticalAlignment="Bottom" Height="40" HorizontalAlignment="Right" Click="btnSaveSettings_Click"/>
                     <TextBox Name="tbLocalToday" Grid.Row="0" Grid.Column="1" Controls:TextBoxHelper.Watermark="Lokaler Pfad für heute" Height="20" VerticalAlignment="Top" Margin="0, 2" MaxLines="1"/>
                     <Button Name="btnLocalToday" Content="..." Grid.Row="0" Grid.Column="2" FontSize="11" Height="20" VerticalAlignment="Top" HorizontalAlignment="Right" Width="30" Margin="0, 2" Click="btnLocalToday_Click"/>

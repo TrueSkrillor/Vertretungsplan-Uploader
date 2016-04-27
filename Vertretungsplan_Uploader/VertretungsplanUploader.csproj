@@ -98,7 +98,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Settings.cs" />
+    <Compile Include="Properties\Settings.cs" />
     <Compile Include="Tools\GcmTools.cs" />
     <Compile Include="Tools\JsonTools.cs" />
     <Compile Include="VertretungsplanManager.cs" />
