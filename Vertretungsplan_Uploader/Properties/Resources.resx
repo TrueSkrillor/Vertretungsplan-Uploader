@@ -164,10 +164,7 @@
     <value>Einstellungen erfolgreich aus settings.bin geladen</value>
   </data>
   <data name="SUCCESSFULLY_RENAMED_FILE" xml:space="preserve">
-    <value>Datei erfolgreich in {0}.html umbenannt, beginne mit dem Upload...</value>
-  </data>
-  <data name="SUCCESSFULLY_UPLOADED_FILE" xml:space="preserve">
-    <value>Datei erfolgreich hochgeladen, generiere JSON-Datei...</value>
+    <value>Datei erfolgreich in {0}.html umbenannt, generiere JSON-Datei...</value>
   </data>
   <data name="DELETED_LOCAL_FILE" xml:space="preserve">
     <value>Die Datei schuelerplan.html wurde lokal gelöscht. Lösche online...</value>

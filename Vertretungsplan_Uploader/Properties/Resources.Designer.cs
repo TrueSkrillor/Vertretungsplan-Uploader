@@ -242,20 +242,11 @@ namespace Vertretungsplan_Uploader.Properties {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Datei erfolgreich in {0}.html umbenannt, beginne mit dem Upload... ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Datei erfolgreich in {0}.html umbenannt, generiere JSON-Datei... ähnelt.
         /// </summary>
         internal static string SUCCESSFULLY_RENAMED_FILE {
             get {
                 return ResourceManager.GetString("SUCCESSFULLY_RENAMED_FILE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Datei erfolgreich hochgeladen, generiere JSON-Datei... ähnelt.
-        /// </summary>
-        internal static string SUCCESSFULLY_UPLOADED_FILE {
-            get {
-                return ResourceManager.GetString("SUCCESSFULLY_UPLOADED_FILE", resourceCulture);
             }
         }
     }

@@ -81,10 +81,8 @@ namespace Vertretungsplan_Uploader
                 try
                 {
                     Log(string.Format(Resources.SUCCESSFULLY_RENAMED_FILE, onlineName));
-                    _ftpTools.UploadFile((pToday ? Settings.Default.LocalFolderToday : Settings.Default.LocalFolderTomorrow) + "/" + onlineName + ".html", Settings.Default.FtpPath + onlineName + ".html");
                     if (pToday) _onlineFileEditToday = TodayLastEdited; else _onlineFileEditTomorrow = TomorrowLastEdited;
                     if (pToday) _onlineToday = onlineName; else _onlineTomorrow = onlineName;
-                    Log(Resources.SUCCESSFULLY_UPLOADED_FILE);
                     JsonTools.GenerateJson((pToday ? Settings.Default.LocalFolderToday : Settings.Default.LocalFolderTomorrow), onlineName);
                     Log(Resources.GENERATED_JSON_FILE);
                     _ftpTools.UploadFile((pToday ? Settings.Default.LocalFolderToday : Settings.Default.LocalFolderTomorrow) + "/" + onlineName + ".json", Settings.Default.FtpPath + onlineName + ".json");
@@ -103,7 +101,6 @@ namespace Vertretungsplan_Uploader
             else if (!(pToday ? _onlineToday : _onlineTomorrow).Equals(""))
             {
                 Log(Resources.DELETED_LOCAL_FILE);
-                _ftpTools.DeleteFile(Settings.Default.FtpPath + (pToday ? _onlineToday : _onlineTomorrow) + ".html");
                 _ftpTools.DeleteFile(Settings.Default.FtpPath + (pToday ? _onlineToday : _onlineTomorrow) + ".json");
                 if (pToday) _onlineToday = ""; else _onlineTomorrow = "";
             }
@@ -155,7 +152,6 @@ namespace Vertretungsplan_Uploader
                 {
                     try
                     {
-                        _ftpTools.DeleteFile(string.Format("{0}schuelerplan_{1}_{2}.html", Settings.Default.FtpPath, day, pToday ? "heute" : "morgen"));
                         _ftpTools.DeleteFile(string.Format("{0}schuelerplan_{1}_{2}.json", Settings.Default.FtpPath, day, pToday ? "heute" : "morgen"));
                     }
                     catch (Exception e) { Debug.WriteLine(e.Message); }
