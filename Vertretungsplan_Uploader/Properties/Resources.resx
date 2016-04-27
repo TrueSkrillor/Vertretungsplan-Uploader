@@ -117,8 +117,71 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="DELETE_TEMPORARY_FILES" xml:space="preserve">
+    <value>Lösche temporäre Dateien...</value>
+  </data>
+  <data name="DETECTED_CHANGE" xml:space="preserve">
+    <value>Es wurde eine Änderung im Pfad {0} erkannt, letzte Änderung: {1}</value>
+  </data>
+  <data name="ERROR_CHANGING_LAST_EDIT_TIME" xml:space="preserve">
+    <value>Es ist ein Fehler beim Ändern der letzten Bearbeitungszeit aufgetreten:</value>
+  </data>
+  <data name="ERROR_MANUAL_SYNC_MISSING_SETTINGS" xml:space="preserve">
+    <value>Vor einem manuellen Sync müssen alle Einstellungen korrekt eingestellt sein!</value>
+  </data>
+  <data name="ERROR_SAVE_SETTINGS_MISSING_SETTINGS" xml:space="preserve">
+    <value>Es fehlen einige Einstellungen. Die Einstellungen konnten nicht gespeichert werden!</value>
+  </data>
+  <data name="GENERATED_JSON_FILE" xml:space="preserve">
+    <value>JSON-Datei erstellt, beginne mit dem Upload...</value>
+  </data>
+  <data name="LOAD_SETTINGS_NO_SETTINGS_CONFIGURED" xml:space="preserve">
+    <value>Keine vorherigen Einstellungen gefunden, bitte konfigurieren!</value>
+  </data>
+  <data name="NOTIFICATION_COMPLETE" xml:space="preserve">
+    <value>Benachrichtigung abgeschlossen ({0})</value>
+  </data>
+  <data name="NOTIFICATION_NEW_VP_ONLINE" xml:space="preserve">
+    <value>Ein neuer Vertretungsplan ist jetzt online</value>
+  </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="notifyIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\notifyIcon.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="NOTIFY_ICON_TEXT" xml:space="preserve">
+    <value>Vertretungsplan</value>
+  </data>
+  <data name="NOTIFYING_MOBILE_DEVICES" xml:space="preserve">
+    <value>Benachrichtige mobile Endgeräte via Gcm...</value>
+  </data>
+  <data name="SAVED_SETTINGS" xml:space="preserve">
+    <value>Einstellungen gespeichert!</value>
+  </data>
+  <data name="SETTINGS_DELIVERED_TO_MANAGER" xml:space="preserve">
+    <value>Einstellungen an den Uploadmanager übergeben.</value>
+  </data>
+  <data name="SUCCESSFULLY_LOADED_SETTINGS" xml:space="preserve">
+    <value>Einstellungen erfolgreich aus settings.bin geladen</value>
+  </data>
+  <data name="SUCCESSFULLY_RENAMED_FILE" xml:space="preserve">
+    <value>Datei erfolgreich in {0}.html umbenannt, beginne mit dem Upload...</value>
+  </data>
+  <data name="SUCCESSFULLY_UPLOADED_FILE" xml:space="preserve">
+    <value>Datei erfolgreich hochgeladen, generiere JSON-Datei...</value>
+  </data>
+  <data name="DELETED_LOCAL_FILE" xml:space="preserve">
+    <value>Die Datei schuelerplan.html wurde lokal gelöscht. Lösche online...</value>
+  </data>
+  <data name="ERROR_READING_SOURCE_FILE" xml:space="preserve">
+    <value>Es ist ein Fehler beim Lesen der Quelldatei aufgetreten: {0}</value>
+  </data>
+  <data name="ERROR_UNKNOWN" xml:space="preserve">
+    <value>Es ist ein unbekannter Fehler aufgetreten: {0}</value>
+  </data>
+  <data name="ERROR_UPLOADING_FILE" xml:space="preserve">
+    <value>Es ist ein Fehler beim Hochladen der Datei aufgetreten: {0}</value>
+  </data>
+  <data name="NO_CHARACTERISTICS_FOUND" xml:space="preserve">
+    <value>Die Datei enthält keine Merkmale, stoppe Bearbeitung!</value>
   </data>
 </root>

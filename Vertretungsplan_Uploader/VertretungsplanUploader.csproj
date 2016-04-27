@@ -98,6 +98,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Settings.cs" />
     <Compile Include="Tools\GcmTools.cs" />
     <Compile Include="Tools\JsonTools.cs" />
     <Compile Include="VertretungsplanManager.cs" />
@@ -109,7 +110,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DataClasses\Settings.cs" />
     <Compile Include="Tools\FtpTools.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

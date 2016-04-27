@@ -1,6 +1,6 @@
 ﻿using System.Text;
 using System.Net;
-using Vertretungsplan_Uploader.DataClasses;
+using Vertretungsplan_Uploader.Properties;
 using System.IO;
 using System.Diagnostics;
 
@@ -11,7 +11,7 @@ namespace Vertretungsplan_Uploader
         private NetworkCredential _credentials;
         
         internal FtpTools(string pUser, string pPassword) { _credentials = new NetworkCredential(pUser, pPassword); }
-        internal FtpTools(Settings pSettings) : this(pSettings.Username, pSettings.Password) { }
+        internal FtpTools() : this(Settings.Default.FtpUsername, Settings.Default.FtpPassword) { }
 
         internal void UploadFile(string pLocalFile, string pRemoteFile)
         {

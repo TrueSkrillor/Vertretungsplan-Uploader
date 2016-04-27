@@ -3,7 +3,7 @@
                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                       xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
                       Title="Vertretungsplan Uploader" ResizeMode="CanMinimize"
-                      Height="450" Width="700" Closing="MetroWindow_Closing" ShowMinButton="True" StateChanged="MetroWindow_StateChanged">
+                      Height="450" Width="700" ShowMinButton="True" StateChanged="MetroWindow_StateChanged">
     <Controls:MetroWindow.Flyouts>
         <Controls:FlyoutsControl>
             <Controls:Flyout Header="Einstellungen" Position="Right" Width="525" IsOpen="False" Name="flyoutSettings">
@@ -18,24 +18,27 @@
                         <RowDefinition />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="4*" />
+                        <ColumnDefinition Width="8*"/>
                         <ColumnDefinition />
-                        <ColumnDefinition Width="2*"/>
                     </Grid.ColumnDefinitions>
                     <Label Content="Lokaler Pfad heute:" Grid.Row="0" Grid.Column="0" FontWeight="SemiBold" FontSize="13"/>
                     <Label Content="Lokaler Pfad morgen:" Grid.Row="1" Grid.Column="0" FontWeight="SemiBold" FontSize="13" />
-                    <Label Content="FTP-Verzeichnis:" Grid.Row="2" Grid.Column="0" FontWeight="SemiBold" FontSize="13" />
-                    <Label Content="FTP-Benutzername:" Grid.Row="3" Grid.Column="0" FontWeight="SemiBold" FontSize="13" />
-                    <Label Content="FTP-Passwort:" Grid.Row="4" Grid.Column="0" FontWeight="SemiBold" FontSize="13" />
+                    <Label Content="FTP-Verzeichnis:" Grid.Row="2" Grid.Column="0" FontWeight="SemiBold" FontSize="13"/>
+                    <Label Content="FTP-Benutzername:" Grid.Row="3" Grid.Column="0" FontWeight="SemiBold" FontSize="13"/>
+                    <Label Content="FTP-Passwort:" Grid.Row="4" Grid.Column="0" FontWeight="SemiBold" FontSize="13"/>
                     <Label Content="GCM API-Key:" Grid.Row="5" Grid.Column="0" FontWeight="SemiBold" FontSize="13" />
                     <Button Name="btnSaveSettings" Content="Speichern" Grid.Row="6" Grid.Column="0" 
                             Grid.ColumnSpan="2" FontWeight="SemiBold" FontSize="13" Width="150" 
                             VerticalAlignment="Bottom" Height="40" HorizontalAlignment="Right" Click="btnSaveSettings_Click"/>
                     <TextBox Name="tbLocalToday" Grid.Row="0" Grid.Column="1" Controls:TextBoxHelper.Watermark="Lokaler Pfad für heute" Height="20" VerticalAlignment="Top" Margin="0, 2" MaxLines="1"/>
+                    <Button Name="btnLocalToday" Content="..." Grid.Row="0" Grid.Column="2" FontSize="11" Height="20" VerticalAlignment="Top" HorizontalAlignment="Right" Width="30" Margin="0, 2" Click="btnLocalToday_Click"/>
                     <TextBox Name="tbLocalTomorrow" Grid.Row="1" Grid.Column="1" Controls:TextBoxHelper.Watermark="Lokaler Pfad für morgen" Height="20" VerticalAlignment="Top" Margin="0, 2" MaxLines="1"/>
-                    <TextBox Name="tbFtpFolder" Grid.Row="2" Grid.Column="1" Controls:TextBoxHelper.Watermark="FTP-Server/Verzeichnis des Vertretungsplans" Height="20" VerticalAlignment="Top" Margin="0, 2" MaxLines="1"/>
-                    <TextBox Name="tbFtpUser" Grid.Row="3" Grid.Column="1" Controls:TextBoxHelper.Watermark="FTP-Benutzer für diesen Server" Height="20" VerticalAlignment="Top" Margin="0, 2" MaxLines="1"/>
-                    <PasswordBox Name="tbFtpPassword" Grid.Row="4" Grid.Column="1" Controls:PasswordBoxHelper.CapsLockIcon="CAPS" Controls:TextBoxHelper.Watermark="FTP-Passwort für diesen Server" Height="20" VerticalAlignment="Top" Margin="0, 2" PasswordChar="*"/>
-                    <TextBox Name="tbGcmApiKey" Grid.Row="5" Grid.Column="1" Controls:TextBoxHelper.Watermark="API-Key für das GCM-System" Height="20" VerticalAlignment="Top" Margin="0, 2" MaxLines="1" />
+                    <Button Name="btnLocalTomorrow" Content="..." Grid.Row="1" Grid.Column="2" FontSize="11" Height="20" VerticalAlignment="Top" HorizontalAlignment="Right" Width="30" Margin="0, 2" Click="btnLocalTomorrow_Click"/>
+                    <TextBox Name="tbFtpFolder" Grid.Row="2" Grid.Column="1" Controls:TextBoxHelper.Watermark="FTP-Server/Verzeichnis des Vertretungsplans" Height="20" VerticalAlignment="Top" Margin="0, 2" MaxLines="1" Grid.ColumnSpan="2"/>
+                    <TextBox Name="tbFtpUser" Grid.Row="3" Grid.Column="1" Controls:TextBoxHelper.Watermark="FTP-Benutzer für diesen Server" Height="20" VerticalAlignment="Top" Margin="0, 2" MaxLines="1" Grid.ColumnSpan="2"/>
+                    <PasswordBox Name="tbFtpPassword" Grid.Row="4" Grid.Column="1" Controls:PasswordBoxHelper.CapsLockIcon="CAPS" Controls:TextBoxHelper.Watermark="FTP-Passwort für diesen Server" Height="20" VerticalAlignment="Top" Margin="0, 2" PasswordChar="*" Grid.ColumnSpan="2"/>
+                    <TextBox Name="tbGcmApiKey" Grid.Row="5" Grid.Column="1" Controls:TextBoxHelper.Watermark="API-Key für das GCM-System" Height="20" VerticalAlignment="Top" Margin="0, 2" MaxLines="1" Grid.ColumnSpan="2" />
                 </Grid>
             </Controls:Flyout>
         </Controls:FlyoutsControl>

@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Windows;
 using MahApps.Metro.Controls;
-using Vertretungsplan_Uploader.DataClasses;
 using Vertretungsplan_Uploader;
 using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Runtime.Serialization;
 using System.Windows.Forms;
+using Vertretungsplan_Uploader.Properties;
 
 namespace VertretungsplanUploader
 {
@@ -15,7 +13,6 @@ namespace VertretungsplanUploader
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
-        private Settings _settings;
         private VertretungsplanManager _manager;
 
         private NotifyIcon notifyIcon;
@@ -26,11 +23,11 @@ namespace VertretungsplanUploader
 
             notifyIcon = new NotifyIcon();
             notifyIcon.Icon = Vertretungsplan_Uploader.Properties.Resources.notifyIcon;
-            notifyIcon.Text = "Vertretungsplan";
+            notifyIcon.Text = Vertretungsplan_Uploader.Properties.Resources.NOTIFY_ICON_TEXT;
             notifyIcon.Visible = false;
             notifyIcon.Click += NotifyIcon_Click;
 
-            new Action(() => _settings = LoadSettings()).BeginInvoke(null, this);
+            new Action(() => ApplySettings()).BeginInvoke(null, this);
         }
 
         private void NotifyIcon_Click(object sender, EventArgs e)
@@ -44,45 +41,54 @@ namespace VertretungsplanUploader
 
         private void btnManualSync_Click(object sender, RoutedEventArgs e)
         {
-            if (_settings != null && _manager != null)
+            if (Settings.Default.SettingsConfigured && _manager != null)
             {
                 try
                 {
                     _manager.DeleteAllOnlineFilesAsync();
-                    if (File.Exists(_settings.FilePathToday))
+                    if (File.Exists(Settings.Default.FilePathToday))
                         _manager.TodayLastEdited = DateTime.Now;
-                    if (File.Exists(_settings.FilePathTomorrow))
+                    if (File.Exists(Settings.Default.FilePathTomorrow))
                         _manager.TomorrowLastEdited = DateTime.Now;
                 }
-                catch (IOException ex) { AppendMessageToLog("Es ist ein Fehler beim Ändern der letzten Bearbeitungszeit aufgetreten: " + ex.Message); }
+                catch (IOException ex) { AppendMessageToLog(Vertretungsplan_Uploader.Properties.Resources.ERROR_CHANGING_LAST_EDIT_TIME + ex.Message); }
             }
             else
-                AppendMessageToLog("Vor einem manuellen Sync müssen alle Einstellungen korrekt eingestellt sein!");
+                AppendMessageToLog(Vertretungsplan_Uploader.Properties.Resources.ERROR_MANUAL_SYNC_MISSING_SETTINGS);
         }
 
         private void btnSaveSettings_Click(object sender, RoutedEventArgs e) => new Action(() => SaveSettings()).Invoke();
 
         private void SaveSettings()
         {
-            if(tbLocalToday.Text.Equals("") || tbLocalTomorrow.Text.Equals("") || tbFtpFolder.Text.Equals("") || tbFtpPassword.Password.Equals("") || tbFtpUser.Text.Equals(""))
+            Settings.Default.LocalFolderToday = tbLocalToday.Text;
+            Settings.Default.LocalFolderTomorrow = tbLocalTomorrow.Text;
+            Settings.Default.FtpPath = tbFtpFolder.Text;
+            Settings.Default.FtpUsername = tbFtpUser.Text;
+            Settings.Default.FtpPassword = tbFtpPassword.Password;
+            Settings.Default.GcmApiKey = tbGcmApiKey.Text;
+
+            Settings.Default.Save();
+
+            if (tbLocalToday.Text.Equals("") || tbLocalTomorrow.Text.Equals("") || tbFtpFolder.Text.Equals("") || tbFtpPassword.Password.Equals("") || tbFtpUser.Text.Equals(""))
             {
-                AppendMessageToLog("Es fehlen einige Einstellungen. Die Einstellungen konnten nicht gespeichert werden!");
+                AppendMessageToLog(Vertretungsplan_Uploader.Properties.Resources.ERROR_SAVE_SETTINGS_MISSING_SETTINGS);
                 return;
             }
-            _settings = new Settings(tbLocalToday.Text, tbLocalTomorrow.Text, tbFtpFolder.Text, tbFtpUser.Text, tbFtpPassword.Password, tbGcmApiKey.Text);
 
-            AppendMessageToLog("Einstellungen gespeichert!");
+            Settings.Default.SettingsConfigured = true;
+            Settings.Default.Save();
+
+            AppendMessageToLog(Vertretungsplan_Uploader.Properties.Resources.SAVED_SETTINGS);
 
             if (_manager != null)
-                _manager.changeSettings(_settings);
+                _manager.ChangeSettings();
             else
-                _manager = new VertretungsplanManager(_settings, this);
+                _manager = new VertretungsplanManager(this);
 
-            AppendMessageToLog("Einstellungen an den Uploadmanager übergeben.");
+            AppendMessageToLog(Vertretungsplan_Uploader.Properties.Resources.SETTINGS_DELIVERED_TO_MANAGER);
             flyoutSettings.IsOpen = false;
         }
-
-        private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e) => SaveSettingsToFile();
 
         private void MetroWindow_StateChanged(object sender, EventArgs e)
         {
@@ -92,43 +98,46 @@ namespace VertretungsplanUploader
             }
         }
 
-        public void AppendMessageToLog(string pMessage) => Dispatcher.BeginInvoke(new Action(() => tbStatus.AppendText(string.Format("[{0}][{1}]\t{2}\n", DateTime.Now.ToShortDateString(), DateTime.Now.ToShortTimeString(), pMessage))));
-
-        private Settings LoadSettings()
+        public void AppendMessageToLog(string pMessage)
         {
-            if (File.Exists("./settings.bin"))
-            {
-                IFormatter formatter = new BinaryFormatter();
-                Stream stream = new FileStream("./settings.bin", FileMode.Open, FileAccess.Read, FileShare.Read);
-                Settings result = (Settings)formatter.Deserialize(stream);
-                stream.Close();
-
-                if (result != null)
-                {
-                    Dispatcher.BeginInvoke(new Action(() => tbLocalToday.Text = result.LocalFolderToday));
-                    Dispatcher.BeginInvoke(new Action(() => tbLocalTomorrow.Text = result.LocalFolderTomorrow));
-                    Dispatcher.BeginInvoke(new Action(() => tbFtpFolder.Text = result.RemotePath));
-                    Dispatcher.BeginInvoke(new Action(() => tbFtpUser.Text = result.Username));
-                    Dispatcher.BeginInvoke(new Action(() => tbFtpPassword.Password = result.Password));
-                    _manager = new VertretungsplanManager(result, this);
-
-                }
-
-                AppendMessageToLog("Einstellungen erfolgreich aus settings.bin geladen");
-                return result;
-            }
-            AppendMessageToLog("Keine vorherigen Einstellungen gefunden, bitte konfigurieren!");
-            return null;
+            Dispatcher.BeginInvoke(new Action(() => tbStatus.AppendText(string.Format("[{0}][{1}]\t{2}\n", DateTime.Now.ToShortDateString(), DateTime.Now.ToShortTimeString(), pMessage))));
+            Dispatcher.BeginInvoke(new Action(() => tbStatus.ScrollToEnd()));
         }
 
-        private void SaveSettingsToFile()
+        private void ApplySettings()
         {
-            if (_settings == null)
-                return;
-            IFormatter formatter = new BinaryFormatter();
-            Stream stream = new FileStream("./settings.bin", FileMode.Create, FileAccess.Write, FileShare.None);
-            formatter.Serialize(stream, _settings);
-            stream.Close();
+            Dispatcher.BeginInvoke(new Action(() => tbLocalToday.Text = Settings.Default.LocalFolderToday));
+            Dispatcher.BeginInvoke(new Action(() => tbLocalTomorrow.Text = Settings.Default.LocalFolderTomorrow));
+            Dispatcher.BeginInvoke(new Action(() => tbFtpFolder.Text = Settings.Default.FtpPath));
+            Dispatcher.BeginInvoke(new Action(() => tbFtpUser.Text = Settings.Default.FtpUsername));
+            Dispatcher.BeginInvoke(new Action(() => tbFtpPassword.Password = Settings.Default.FtpPassword));
+            Dispatcher.BeginInvoke(new Action(() => tbGcmApiKey.Text = Settings.Default.GcmApiKey));
+
+            if (!Settings.Default.SettingsConfigured)
+                AppendMessageToLog(Vertretungsplan_Uploader.Properties.Resources.LOAD_SETTINGS_NO_SETTINGS_CONFIGURED);
+            else
+            {
+                _manager = new VertretungsplanManager(this);
+                AppendMessageToLog(Vertretungsplan_Uploader.Properties.Resources.SUCCESSFULLY_LOADED_SETTINGS);
+            }
+        }
+
+        private void btnLocalToday_Click(object sender, RoutedEventArgs e)
+        {
+            FolderBrowserDialog folderDialog = new FolderBrowserDialog();
+            DialogResult result = folderDialog.ShowDialog();
+
+            if (result == System.Windows.Forms.DialogResult.OK)
+                tbLocalToday.Text = folderDialog.SelectedPath;
+        }
+
+        private void btnLocalTomorrow_Click(object sender, RoutedEventArgs e)
+        {
+            FolderBrowserDialog folderDialog = new FolderBrowserDialog();
+            DialogResult result = folderDialog.ShowDialog();
+
+            if (result == System.Windows.Forms.DialogResult.OK)
+                tbLocalTomorrow.Text = folderDialog.SelectedPath;
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Text;
 using System.Net;
 using System.IO;
+using Vertretungsplan_Uploader.Properties;
 
 namespace Vertretungsplan_Uploader.Tools
 {
@@ -9,9 +10,9 @@ namespace Vertretungsplan_Uploader.Tools
     {
         private readonly string API_KEY;
 
-        internal GcmTools(string pApiKey)
+        internal GcmTools()
         {
-            API_KEY = pApiKey;
+            API_KEY = Settings.Default.GcmApiKey;
         }
 
         internal string SendBroadcast(string message)

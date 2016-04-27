@@ -22,5 +22,89 @@ namespace Vertretungsplan_Uploader.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LocalFolderToday {
+            get {
+                return ((string)(this["LocalFolderToday"]));
+            }
+            set {
+                this["LocalFolderToday"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LocalFolderTomorrow {
+            get {
+                return ((string)(this["LocalFolderTomorrow"]));
+            }
+            set {
+                this["LocalFolderTomorrow"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string FtpPath {
+            get {
+                return ((string)(this["FtpPath"]));
+            }
+            set {
+                this["FtpPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string FtpUsername {
+            get {
+                return ((string)(this["FtpUsername"]));
+            }
+            set {
+                this["FtpUsername"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string FtpPassword {
+            get {
+                return ((string)(this["FtpPassword"]));
+            }
+            set {
+                this["FtpPassword"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string GcmApiKey {
+            get {
+                return ((string)(this["GcmApiKey"]));
+            }
+            set {
+                this["GcmApiKey"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool SettingsConfigured {
+            get {
+                return ((bool)(this["SettingsConfigured"]));
+            }
+            set {
+                this["SettingsConfigured"] = value;
+            }
+        }
     }
 }
